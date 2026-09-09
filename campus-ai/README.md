@@ -1,60 +1,166 @@
 # AI Campus Data Analyst
 
-An AI Data Analyst for campus data that accepts CSV/Excel files and automatically:
-- Understands the dataset
-- Calculates reliable statistics and KPIs
-- Generates useful charts
-- Finds important trends, anomalies, and relationships
-- Produces AI-generated insights and recommendations
-- Answers natural-language questions about the data
+<p align="center">
+	<strong>Turn campus records into decisions, not spreadsheets.</strong><br>
+	Upload a CSV or Excel file. Get the signal in seconds.
+</p>
 
-**Core principle:** Pandas does the calculations. Gemini does the interpretation.
+<p align="center">
+	<img src="https://img.shields.io/badge/Streamlit-dashboard-ff4b4b?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit">
+	<img src="https://img.shields.io/badge/Pandas-deterministic%20analysis-150458?style=for-the-badge&logo=pandas&logoColor=white" alt="Pandas">
+	<img src="https://img.shields.io/badge/Plotly-interactive%20charts-3f4f75?style=for-the-badge&logo=plotly&logoColor=white" alt="Plotly">
+	<img src="https://img.shields.io/badge/Gemini-optional%20AI%20layer-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google Gemini">
+</p>
 
-## Technology Stack
+<p align="center">
+	<a href="#quick-start">Quick start</a> ·
+	<a href="#what-it-does">Capabilities</a> ·
+	<a href="#ask-the-data">Ask the data</a> ·
+	<a href="#project-layout">Project layout</a>
+</p>
 
-| Layer | Technology |
-|---|---|
-| UI | Streamlit |
-| Data processing | Pandas |
-| Excel support | OpenPyXL |
-| Charts | Plotly |
-| AI | Google Gemini (free tier) |
-| Config | `.env` |
+## The idea
 
-## Setup
+Campus teams already have the data. The hard part is finding the few patterns that deserve attention: a department falling behind on placements, students drifting into a risk zone, or a relationship between attendance and outcomes.
 
-1. Create a virtual environment and install dependencies:
+**AI Campus Data Analyst** is a focused Streamlit workspace for exactly that job. It profiles uploaded data, calculates transparent KPIs, builds useful charts, and adds an optional Gemini interpretation layer for summaries, recommendations, and questions in plain English.
+
+> **Pandas calculates. Gemini interprets.**
+>
+> Numerical answers come from deterministic Python calculations first. The AI layer explains those results instead of inventing its own numbers.
+
+## What it does
+
+| Workspace | What you get |
+| --- | --- |
+| **Dataset overview** | Row count, column count, missing values, duplicates, and a preview of the data |
+| **KPI radar** | Total students, average CGPA, attendance, placement rate, salary, internship rate, and at-risk students when matching columns exist |
+| **Visual analytics** | Department comparisons, distributions, salary views, CGPA vs attendance, and a correlation heatmap |
+| **AI briefing** | Executive summary, prioritized findings, anomalies, risk factors, and actionable recommendations |
+| **Ask the Data** | Natural-language questions grounded in the uploaded dataset and computed results |
+
+## Quick start
+
+### 1. Install
+
 ```bash
-python3 -m venv venv
-source venv/bin/activate
+git clone <your-repository-url>
+cd campus-ai
+
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-2. Add your Gemini API key:
+### 2. Optional: enable Gemini
+
+The dashboard and statistical analysis work without an API key. Add one to unlock AI insights and **Ask the Data**:
+
 ```bash
 cp .env.example .env
-# edit .env and set GEMINI_API_KEY=your_key
 ```
 
-3. Run the app:
+Then set the value in `.env`:
+
+```env
+GEMINI_API_KEY=your_api_key_here
+```
+
+Keep `.env` private. Never commit API keys.
+
+### 3. Launch
+
 ```bash
 streamlit run app.py
 ```
 
-4. Upload a CSV/Excel file, or click "Use sample data" to demo with `sample_data.csv`.
+Open the local URL shown by Streamlit, upload a `.csv`, `.xlsx`, or `.xls` file, or choose **Use sample data** for an instant demo.
 
-## Usage
+## Ask the Data
 
-- **Dataset Overview**: rows, columns, missing values, duplicates
-- **KPIs**: Total Students, Avg CGPA, Attendance, Placement Rate, and more (auto-detected from columns)
-- **Visual Analytics**: interactive Plotly charts
-- **AI Insights**: executive summary, key insights, recommendations (requires Google API key)
-- **Ask the Data**: natural-language questions backed by Pandas
+Once Gemini is configured, try questions such as:
 
-## Sample Questions
+```text
+Which department has the highest placement rate?
+Compare CSE and ECE.
+How many students are at risk?
+Which students have low attendance and low CGPA?
+Show me the top 10 students by CGPA.
+What is the average salary by department?
+```
 
-- Which department has the highest placement rate?
-- Compare CSE and ECE.
-- How many students are at risk?
-- Which students have low attendance and low CGPA?
-- Show me the top 10 students by CGPA.
+The app handles several common questions locally with Pandas before asking Gemini to turn the calculated result into a concise explanation.
+
+## Bring your own dataset
+
+The analyzer works best with descriptive column names. KPI and chart detection is automatic, so columns are optional rather than mandatory.
+
+| Column | Enables |
+| --- | --- |
+| `Student_ID` | Student-level identification |
+| `Department` | Department comparisons |
+| `CGPA` | CGPA KPI, distribution, ranking, and risk detection |
+| `Attendance` | Attendance KPI, distribution, and risk detection |
+| `Internship` | Internship rate (`Yes`, `True`, or `1`) |
+| `Placement` | Placement rate and department comparison |
+| `Salary` | Average salary and salary distribution; zero values are excluded |
+
+Column names are normalized on load. The sample file at [`sample_data.csv`](sample_data.csv) is ready for a first run.
+
+## How it works
+
+```mermaid
+flowchart LR
+		A[CSV or Excel upload] --> B[Load and normalize]
+		B --> C[Profile with Pandas]
+		C --> D[KPIs and Plotly charts]
+		C --> E[Compact analysis context]
+		E --> F{Gemini configured?}
+		F -->|Yes| G[Insights and recommendations]
+		F -->|No| H[Statistical dashboard]
+		D --> I[Streamlit workspace]
+		G --> I
+		H --> I
+```
+
+The app deliberately keeps the architecture small: no database, vector store, RAG pipeline, or separate frontend is required for this structured-data workflow.
+
+## Technology
+
+| Layer | Choice |
+| --- | --- |
+| Interface | Streamlit |
+| Data loading and calculations | Pandas |
+| Excel support | OpenPyXL |
+| Interactive charts | Plotly Express |
+| AI interpretation | Google Gemini via `google-genai` |
+| Configuration | `python-dotenv` |
+
+## Project layout
+
+```text
+campus-ai/
+├── app.py              # Streamlit application and analysis pipeline
+├── sample_data.csv     # Ready-to-run campus dataset
+├── requirements.txt    # Python dependencies
+├── .env.example        # Gemini configuration template
+└── README.md           # This guide
+```
+
+## Troubleshooting
+
+**The app opens but AI sections are unavailable**
+
+Check that `.env` exists beside `app.py`, contains `GEMINI_API_KEY`, and that the key is valid. The non-AI dashboard remains available.
+
+**My file will not load**
+
+Confirm that it is a readable CSV or Excel workbook and that it contains at least one row. The uploader accepts `.csv`, `.xlsx`, and `.xls` files.
+
+**A KPI or chart is missing**
+
+That usually means the corresponding column is not present, is named differently, or contains values that cannot be interpreted as expected. Start with the sample schema above.
+
+## License
+
+Add the project license here before public distribution.
