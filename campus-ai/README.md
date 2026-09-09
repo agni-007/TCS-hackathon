@@ -16,8 +16,13 @@
 	<a href="#quick-start">Quick start</a> ·
 	<a href="#what-it-does">Capabilities</a> ·
 	<a href="#ask-the-data">Ask the data</a> ·
+	<a href="#current-status">Status</a> ·
 	<a href="#project-layout">Project layout</a>
 </p>
+
+> **Project status: working hackathon MVP**
+>
+> The current `main` branch contains the Streamlit dashboard, sample dataset, deterministic KPI and chart pipeline, optional Gemini insights, and a first set of natural-language query patterns.
 
 ## The idea
 
@@ -38,6 +43,27 @@ Campus teams already have the data. The hard part is finding the few patterns th
 | **Visual analytics** | Department comparisons, distributions, salary views, CGPA vs attendance, and a correlation heatmap |
 | **AI briefing** | Executive summary, prioritized findings, anomalies, risk factors, and actionable recommendations |
 | **Ask the Data** | Natural-language questions grounded in the uploaded dataset and computed results |
+
+## Current status
+
+### Available now
+
+- CSV, XLSX, and XLS upload with empty-file and read-error handling
+- Automatic column normalization, profiling, missing-value counts, duplicate counts, and data preview
+- Conditional KPI generation based on available columns
+- Local Plotly charts for department comparisons, distributions, salary, attendance, CGPA, and correlations
+- Optional Gemini executive summary, findings, and recommendations from a compact analysis context
+- Gemini-assisted explanations for supported questions such as rankings, department comparisons, risk counts, salary, attendance, and CGPA
+
+### Known boundaries
+
+- Gemini features require `GEMINI_API_KEY`; the statistical dashboard works without it
+- The current query router supports common campus-analysis patterns rather than arbitrary dataframe operations
+- Unmatched questions use a generic Gemini prompt and should be treated as exploratory, not as a verified calculation
+- Chart and KPI detection depends on recognizable column names and compatible values
+- The current MVP does not yet include date-aware analysis, custom chart building, export buttons, authentication, or persistent storage
+
+The workflow document in the parent directory describes the broader target architecture. This README documents the implementation that is currently in the repository.
 
 ## Quick start
 
@@ -89,7 +115,7 @@ Show me the top 10 students by CGPA.
 What is the average salary by department?
 ```
 
-The app handles several common questions locally with Pandas before asking Gemini to turn the calculated result into a concise explanation.
+For supported question patterns, the app calculates the result with Pandas first and asks Gemini to explain that result. If Gemini is not configured, the app reports that AI features are unavailable. Questions outside the current router fall back to a generic Gemini response and are not guaranteed to be dataset-grounded.
 
 ## Bring your own dataset
 
@@ -105,7 +131,7 @@ The analyzer works best with descriptive column names. KPI and chart detection i
 | `Placement` | Placement rate and department comparison |
 | `Salary` | Average salary and salary distribution; zero values are excluded |
 
-Column names are normalized on load. The sample file at [`sample_data.csv`](sample_data.csv) is ready for a first run.
+Column names are normalized on load by stripping whitespace, replacing spaces with underscores, and title-casing names. The sample file at [`sample_data.csv`](sample_data.csv) is ready for a first run.
 
 ## How it works
 
@@ -152,6 +178,10 @@ campus-ai/
 **The app opens but AI sections are unavailable**
 
 Check that `.env` exists beside `app.py`, contains `GEMINI_API_KEY`, and that the key is valid. The non-AI dashboard remains available.
+
+**A question receives a generic answer**
+
+Use one of the supported patterns in the examples above. The current MVP does not yet translate every natural-language request into a Pandas operation.
 
 **My file will not load**
 
