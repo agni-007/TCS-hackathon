@@ -189,8 +189,8 @@ def get_insights(context):
         return None
     try:
         resp = genai.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=INSIGHT_PROMPT.format(context=context),
+            model="gemini-3.5-flash-lite",
+            contents=INSIGHT_PROMPT.replace("{context}", context),
         )
         text = resp.text.strip()
         if text.startswith("```"):
@@ -242,7 +242,7 @@ def answer_question(df, question):
     if result is None:
         try:
             resp = Q.models.generate_content(
-                model="gemini-2.0-flash",
+                model="gemini-3.5-flash-lite",
                 contents=f"Answer this question about the dataset briefly, using only plausible general reasoning:\n{q}",
             )
             return resp.text.strip()
@@ -255,7 +255,7 @@ def answer_question(df, question):
         rendered = str(result)
 
     resp = Q.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-3.5-flash-lite",
         contents=(
             f"The user asked: '{question}'\n\n"
             f"Here is the actual calculated result from the dataset:\n{rendered}\n\n"
