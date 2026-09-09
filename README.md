@@ -165,12 +165,18 @@ The app deliberately keeps the architecture small: no database, vector store, RA
 ## Project layout
 
 ```text
-campus-ai/
-├── app.py              # Streamlit application and analysis pipeline
-├── sample_data.csv     # Ready-to-run campus dataset
-├── requirements.txt    # Python dependencies
-├── .env.example        # Gemini configuration template
-└── README.md           # This guide
+.
+├── app/
+│   └── app.py              # Streamlit application and analysis pipeline
+├── data/
+│   ├── sample_data.csv     # Ready-to-run campus dataset
+│   └── combined_campus_data_cleaned.csv # Cleaned campus data
+├── docs/
+│   └── workflow.md         # Project architecture and workflow
+├── scripts/
+│   └── visualize_campus_data.py # Utility scripts for visualization
+├── requirements.txt        # Python dependencies
+└── README.md               # This guide
 ```
 
 ## Troubleshooting

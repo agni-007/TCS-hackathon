@@ -278,7 +278,7 @@ def main():
         st.write("")
         st.write("")
         if st.button("Use sample data"):
-            up = "sample_data.csv"
+            up = "data/sample_data.csv"
 
     if up is None:
         st.info("Upload a CSV or Excel file to begin analysis.")

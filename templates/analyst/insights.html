@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Insights - AI Campus Analyst{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">🤖 AI Analysis Insights</h2>
+
+{% if insights %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Executive Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ insights.summary }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <h4 class="mb-3">Key Findings</h4>
+            {% for ins in insights.insights %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            {% if ins.importance == 'high' %}🔴{% elif ins.importance == 'medium' %}🟡{% else %}🟢{% endif %}
+                            {{ ins.title }}
+                        </h6>
+                        <p class="card-text">{{ ins.description }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-4">
+            <h4 class="mb-3">Recommendations</h4>
+            <div class="list-group">
+                {% for rec in insights.recommendations %}
+                    <div class="list-group-item">{{ rec }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-warning">
+        AI insights are temporarily unavailable. Please check your API key configuration.
+    </div>
+{% endif %}
+{% endblock %}

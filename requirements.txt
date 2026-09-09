@@ -1,6 +1,8 @@
-streamlit
+django
+django-environ
 pandas
-plotly
 openpyxl
+plotly
 google-genai
 python-dotenv
+streamlit
